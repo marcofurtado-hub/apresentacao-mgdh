@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jogos com Claude Code — Marco Furtado</title>
+<style>
+  :root{
+    --bg:#0a0e1a;
+    --bg2:#111827;
+    --ink:#e5e7eb;
+    --muted:#9ca3af;
+    --accent:#7c3aed;
+    --accent2:#06b6d4;
+    --gold:#fbbf24;
+    --green:#10b981;
+    --red:#ef4444;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(124,58,237,.18), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(6,182,212,.15), transparent 50%),
+      var(--bg);
+  }
+  .deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+  .slide{
+    position:absolute;inset:0;
+    padding:5vh 6vw;
+    display:flex;flex-direction:column;
+    opacity:0;transform:translateX(40px);
+    transition:opacity .5s ease, transform .5s ease;
+    pointer-events:none;
+  }
+  .slide.active{opacity:1;transform:none;pointer-events:auto}
+  .eyebrow{
+    text-transform:uppercase;letter-spacing:.25em;font-size:.78rem;
+    color:var(--accent2);margin-bottom:.6rem;font-weight:600
+  }
+  h1{
+    font-size:clamp(1.8rem,3.6vw,3rem);
+    line-height:1.15;margin-bottom:1.6rem;
+    background:linear-gradient(135deg,#fff 0%, #c4b5fd 60%, #67e8f9 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  h2{font-size:1.05rem;color:var(--muted);font-weight:500;margin-bottom:2.2rem;max-width:70ch}
+  ul{list-style:none;display:flex;flex-direction:column;gap:1rem;max-width:90ch}
+  li{
+    display:flex;gap:1rem;align-items:flex-start;
+    padding:1rem 1.2rem;border-radius:12px;
+    background:linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.06);
+    backdrop-filter: blur(6px);
+  }
+  li .ico{font-size:1.4rem;flex-shrink:0;line-height:1.2}
+  li b{color:#fff;font-weight:600}
+  li span{color:#cbd5e1;font-size:.98rem;line-height:1.55}
+  .games li{border-left:3px solid var(--accent)}
+  .games li:nth-child(2){border-left-color:var(--red)}
+  .games li:nth-child(3){border-left-color:var(--accent2)}
+  .games li:nth-child(4){border-left-color:var(--gold)}
+  .footer-line{
+    margin-top:auto;display:flex;justify-content:space-between;align-items:center;
+    padding-top:2rem;border-top:1px solid rgba(255,255,255,.07);
+    color:var(--muted);font-size:.82rem;
+  }
+  .pill{
+    display:inline-block;padding:.25rem .7rem;border-radius:99px;
+    background:rgba(124,58,237,.18);color:#c4b5fd;
+    font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  }
+  .nav{
+    position:fixed;bottom:1.2rem;right:1.5rem;display:flex;gap:.5rem;align-items:center;
+    color:var(--muted);font-size:.8rem;z-index:10;
+  }
+  .nav button{
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:var(--ink);width:36px;height:36px;border-radius:8px;cursor:pointer;
+    font-size:1rem;transition:all .15s ease;
+  }
+  .nav button:hover{background:rgba(124,58,237,.3);border-color:var(--accent)}
+  .dots{position:fixed;bottom:1.4rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10}
+  .dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s}
+  .dots span.on{background:var(--accent2);width:24px;border-radius:4px}
+  .key-hint{position:fixed;bottom:1.4rem;left:1.5rem;color:var(--muted);font-size:.72rem;letter-spacing:.05em;z-index:10}
+  kbd{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+    padding:1px 6px;border-radius:4px;font-family:inherit;font-size:.7rem;
+  }
+  .closing{font-size:1rem;color:#a78bfa;margin-top:1.5rem;line-height:1.6;max-width:80ch}
+  .closing b{color:#fff}
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- SLIDE 1 -->
+  <section class="slide active" data-slide="1">
+    <div class="eyebrow">Apresentação · M-GDH</div>
+    <h1>Do prompt ao commit:<br/>criando jogos no navegador com Claude Code</h1>
+    <h2>Como um setup mínimo no browser virou uma fábrica pessoal de protótipos jogáveis — sem IDE, sem build step, sem fricção.</h2>
+
+    <ul>
+      <li>
+        <span class="ico">🌐</span>
+        <span><b>Ambiente 100% no navegador</b> — Claude Code via claude.ai/code, conectado direto ao meu repositório no GitHub. Sem instalar IDE, SDK ou toolchain.</span>
+      </li>
+      <li>
+        <span class="ico">🎮</span>
+        <span><b>Stack dos jogos</b> — HTML + JavaScript puro + Canvas/WebGL (e WebXR para VR). Roda em qualquer browser; basta abrir o <code>index.html</code>.</span>
+      </li>
+      <li>
+        <span class="ico">⚡</span>
+        <span><b>Fluxo</b> — descrevo a ideia em linguagem natural → Claude gera e edita os arquivos → testo no preview → peço ajustes → commit e push pro GitHub pela própria interface.</span>
+      </li>
+      <li>
+        <span class="ico">🔁</span>
+        <span><b>Iteração em minutos</b> — ciclo curtíssimo entre "quero X" e ver funcionando. Bugs resolvidos na conversa, sem sair do contexto.</span>
+      </li>
+      <li>
+        <span class="ico">🧠</span>
+        <span><b>Papel que assumi</b> — mais <i>game designer / product owner</i> do que programador. Eu defino mecânica, balanceamento e feel; o Claude implementa e refatora.</span>
+      </li>
+    </ul>
+
+    <div class="footer-line">
+      <span class="pill">Slide 1 de 2 · Setup &amp; Fluxo</span>
+      <span>Marco Furtado · 2026</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide" data-slide="2">
+    <div class="eyebrow">Resultados</div>
+    <h1>4 protótipos jogáveis,<br/>um fim de semana de experimentação</h1>
+    <h2>Cada jogo nasceu de uma conversa. Todos rodam no navegador, todos versionados no GitHub.</h2>
+
+    <ul class="games">
+      <li>
+        <span class="ico">🏰</span>
+        <span><b>Dark Tower · Tower Defense</b> — grid com waves crescentes, múltiplas torres com upgrades, economia de ouro e pathfinding dos inimigos. Foco em balanceamento e progressão.</span>
+      </li>
+      <li>
+        <span class="ico">💀</span>
+        <span><b>Doomzinho · FPS 3D</b> — homenagem ao clássico Doom: renderização 3D no Canvas, mouse-look, inimigos com IA simples e sistema de tiro/vida.</span>
+      </li>
+      <li>
+        <span class="ico">🥽</span>
+        <span><b>Doomzinho VR · WebXR</b> — versão imersiva rodando em headset pelo browser, via WebXR API. Mesma base de código, adaptada para controles de movimento e câmera estereoscópica.</span>
+      </li>
+      <li>
+        <span class="ico">🚀</span>
+        <span><b>Star Fox-like · Rail Shooter 3D</b> — voo "on-rails" estilo SNES, mira livre, ondas de inimigos e obstáculos — com aquele charme low-poly retrô.</span>
+      </li>
+    </ul>
+
+    <p class="closing">
+      <b>Aprendizado principal:</b> com Claude Code + GitHub no navegador, a barreira entre "ter uma ideia de jogo" e "ter o jogo rodando e versionado" praticamente desaparece. O gargalo passa a ser criatividade, não execução.
+    </p>
+
+    <div class="footer-line">
+      <span class="pill">Slide 2 de 2 · Os jogos</span>
+      <span>Obrigado! 🎮</span>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots">
+  <span class="on"></span>
+  <span></span>
+</div>
+
+<div class="key-hint">
+  <kbd>←</kbd> <kbd>→</kbd> ou <kbd>espaço</kbd> para navegar
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <button id="next" aria-label="Próximo">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('#dots span');
+  let i = 0;
+  function go(n){
+    i = Math.max(0, Math.min(slides.length-1, n));
+    slides.forEach((s,k)=>s.classList.toggle('active', k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on', k===i));
+  }
+  document.getElementById('next').onclick = ()=>go(i+1);
+  document.getElementById('prev').onclick = ()=>go(i-1);
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') { e.preventDefault(); go(i+1); }
+    if(e.key==='ArrowLeft' ||e.key==='PageUp')                { e.preventDefault(); go(i-1); }
+    if(e.key==='Home') go(0);
+    if(e.key==='End')  go(slides.length-1);
+  });
+</script>
+</body>
+</html>
